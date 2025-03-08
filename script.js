@@ -1,35 +1,67 @@
+const key = "d07de6f0b34e4671509dda74a2e0ee1b";
 
+function formScreen(dados) {
+  console.log(dados);
+  document.querySelector(".title-city").innerHTML = `Clima em ${dados.name}`;
 
-const key = "d07de6f0b34e4671509dda74a2e0ee1b"
+  if (dados.name == undefined) {
+    document.querySelector(".title-city").innerHTML = `Cidade não encontrada!`;
+  }
 
-function formScreen (dados) {
-    console.log(dados)
-    document.querySelector(".title-city").innerHTML = `Clima em ${dados.name}`
-    document.querySelector(".temp").innerHTML = `${Math.floor(dados.main.temp)}°C`
-    document.querySelector(".text-content").innerHTML = dados.weather[0].description 
-    document.querySelector(".text-umidade").innerHTML = `Umidade: ${dados.main.humidity}%`
-    document.querySelector(".img-content").src = `https://openweathermap.org/img/wn/${dados.weather[0].icon}.png`
+  document.querySelector(".temp").innerHTML = `${Math.floor(dados.main.temp)}°C`;
+  document.querySelector(".text-content").innerHTML =
+    dados.weather[0].description;
+  document.querySelector(
+    ".text-umidade"
+  ).innerHTML = `Umidade: ${dados.main.humidity}%`;
 
-    let temperatura = dados.main.temp 
+  if (dados.weather[0].main == "Clouds") {
+    document.querySelector(".img-content").src = `./IMG/nublado.webp`;
+    document.querySelector("body").style.backgroundImage = `url(./IMG/nublado-wp.webp)`;
+    document.querySelector(".temp").style.color = "#4fc7c7";
 
-    if (temperatura > 30) {
-        document.querySelector("body").style.backgroundImage = `https://images.unsplash.com/photo-1704485351547-a0a9893031f7?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D`
-    } if (temperatura < 10) {
-        document.querySelector("body").style.backgroundImage = `url(https://images.unsplash.com/photo-1428592953211-077101b2021b?q=80&w=1974&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`
-    } else {
-        document.querySelector("body").style.backgroundImage = `url(https://images.unsplash.com/photo-1609881142760-298c2e76725b?q=80&w=1935&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D)`
-    }
+  }
+
+  if (dados.weather[0].main == "Rain") {
+    document.querySelector(".img-content").src = `./IMG/chuva.webp`;
+    document.querySelector("body").style.backgroundImage = `url(./IMG/chuva-wp.webp)`;
+    document.querySelector(".temp").style.color = "#003289";
+  }
+
+  if (dados.weather[0].main == "Clear") {
+    document.querySelector(".img-content").src = `./IMG/ensolarado.webp`;
+    document.querySelector("body").style.backgroundImage = `url(./IMG/ensolarado-wp.webp)`;
+    document.querySelector(".temp").style.color = "#b81414";
+  }
+
+  if (dados.weather[0].main == "Snow") {
+    document.querySelector(".img-content").src = `./IMG/neve.webp`;
+    document.querySelector("body").style.backgroundImage = `url(./IMG/neve-wp.webp)`;
+    document.querySelector(".temp").style.color = "#483d8b";
+  }
+
+  /* document.querySelector(
+    ".img-content"
+  ).src = `https://openweathermap.org/img/wn/${dados.weather[0].icon}.png`; */
 }
 
-async function buscarCidade (cidade) {
+async function buscarCidade(cidade) {
+  const dados = await fetch(
+    `https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${key}&lang=pt_br&units=metric`
+  ).then((resposta) => resposta.json());
 
-    const dados = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cidade}&appid=${key}&lang=pt_br&units=metric`).then( resposta => resposta.json())
-    
-    formScreen(dados)
+  formScreen(dados);
 }
 
-function pesquisar () {
-    const cidade = document.querySelector(".input-city").value
+const pesquisarCidade = document.querySelector(".input-city");
+pesquisarCidade.addEventListener("keydown", function (event) {
+  if (event.key === "Enter") {
+    pesquisar();
+  }
+});
 
-    buscarCidade(cidade)
+function pesquisar() {
+  const cidade = document.querySelector(".input-city").value;
+
+  buscarCidade(cidade);
 }
